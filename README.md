@@ -19,5 +19,5 @@ In the near futur :
 Download the source code, create a build folder using cmake. Open in visual studio, build and run.
 
 # Credits
-- The physucs engine is based on blog posts by Randy Gaul : https://gamedevelopment.tutsplus.com/series/how-to-create-a-custom-physics-engine--gamedev-12715
+- The physics engine is based on blog posts by Randy Gaul : https://gamedevelopment.tutsplus.com/series/how-to-create-a-custom-physics-engine--gamedev-12715
 
