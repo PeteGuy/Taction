@@ -226,13 +226,7 @@ int main()
 			{
 				(*ita)->update();
 			}
-			Manifold m = { &testOBB2, &testOBB };
-			if(resolveCollisionOBB_OBB(&m))
-			{
-				actOnCollision(&m);
-				
-				//Debug::log("pfejzp");
-			}
+			
 			
 			accumulator -= dt;
 		}
@@ -259,8 +253,8 @@ int main()
 		{
 			Render::renderBody(ita->get());
 		}
-		Render::renderBody(&testOBB);
-		Render::renderBody(&testOBB2);
+		/*Render::renderBody(&testOBB);
+		Render::renderBody(&testOBB2);*/
 		//Render::drawPrimitive(&testP, glm::vec2(400,300),0 ,50,25);
 		//Debug::drawDebugLine({ 400.0f,20.0f }, { 400.0f, 300.0f });
 	//})
@@ -300,10 +294,10 @@ int main()
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); */
 
 		
-		Render::renderBody(&testPolygon2);
+		/*Render::renderBody(&testPolygon2);
 		Render::renderBody(&testPolygon3);
 		testPolygon2.update();
-		testPolygon3.update();
+		testPolygon3.update();*/
 
 		
 		if (PolygonVSPolygonSAT(&testPolygon2, &testPolygon3))
