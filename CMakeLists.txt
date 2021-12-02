@@ -11,6 +11,8 @@ set( GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only" )
 set( GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only" )
 
 add_subdirectory( include/glfw )
+add_subdirectory( include/glm )
+
 add_subdirectory(imgui)
 file(GLOB SOURCES src/*.*)
 
@@ -24,7 +26,7 @@ set( PROJECT-STARTER
 
      
 add_executable( Taction ${PROJECT-STARTER} )
-target_link_libraries( Taction ${OPENGL_LIBRARIES} glfw imgui)
+target_link_libraries( Taction ${OPENGL_LIBRARIES} glfw imgui glm)
 if( MSVC )
     if(${CMAKE_VERSION} VERSION_LESS "3.6.0") 
         message( "\n\t[ WARNING ]\n\n\tCMake version lower than 3.6.\n\n\t - Please update CMake and rerun; OR\n\t - Manually set 'GLFW-CMake-starter' as StartUp Project in Visual Studio.\n" )
