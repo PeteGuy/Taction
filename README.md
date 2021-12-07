@@ -3,6 +3,7 @@ Taction
 This is a physics engine based on the blog posts by Randy Gaul.
 The goal of this project is to learn about computing physics in video games and rendering with OpenGL.
 This project allows me to get a better understanding of collision detection algorithm and more broadly the implementation of a physic system in a video game.
+![ScreenShots/BasicCapture.PNG]
 
 Taction currently supports the following : 
 - OBB and Circle collisions
