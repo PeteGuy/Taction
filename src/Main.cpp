@@ -52,7 +52,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
 		glfwGetCursorPos(window, &mouseX, &mouseY);
-		PhysicProcess::bodies.push_back(std::make_unique<RigidBody>(new CircleCollider(40.0f), mouseX, mouseY));
+		PhysicProcess::bodies.push_back(std::make_unique<RigidBody>(new CircleCollider(20.0f), mouseX, mouseY));
+		
 		//PhysicProcess::bodies.push_back(std::make_unique<RigidBody>(new AABB_Shape(40.0f,40.0f), mouseX, mouseY));
 		//PhysicProcess::bodies.back()->transform.velocity = glm::vec2(0.05f, 10.0f);
 		
@@ -178,6 +179,8 @@ int main()
 	PhysicProcess::bodies.push_back(std::make_unique<RigidBody>(new OBBCollider(700.0f, 50.0f), 400, 600));
 	PhysicProcess::bodies[0]->inv_mass = 0;
 	PhysicProcess::bodies[0]->mass = 0;
+	PhysicProcess::bodies[0]->inv_inert = 0;
+	PhysicProcess::bodies[0]->inertia = 0;
 
 
 	

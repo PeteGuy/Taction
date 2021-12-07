@@ -1,5 +1,6 @@
 #include "RigidBody.h"
 #include "timeOperations.h"
+#include "Debug.h"
 //#include <glm/detail/func_geometric.inl>
 
 
@@ -12,7 +13,7 @@ RigidBody::RigidBody()
 	//Mass info
 	mass = 20.0f;
 	inv_mass = PhysicData::calculateSafeInverse(mass);
-	inertia = 0.0f;
+	inertia = 20.0f;
 	inv_inert = PhysicData::calculateSafeInverse(inertia);
 
 	//Material info
@@ -84,39 +85,7 @@ RigidBody::RigidBody(Collider* collider,float x,float y,float angle, float mass,
 
 
 
-//RigidBody::RigidBody(Collider* collider, float x, float y, float mass, float inertia, float density, float restitution, float staticFriction, float dynamicFriction, uint32_t layer)
-//{
-//	//Mass info
-//	this->mass = mass;
-//	this->inv_mass = PhysicData::calculateSafeInverse(mass);
-//	this->inertia = inertia;
-//	this->inv_inert = PhysicData::calculateSafeInverse(inertia);
-//
-//	//Material info
-//	this->density = density;
-//	this->restitution = restitution;
-//	this->staticFriction = staticFriction;
-//	this->dynamicFriction = dynamicFriction;
-//
-//	//Transform info
-//	position = glm::vec2(x, y);
-//	velocity = glm::vec2(0.0f, 0.0f);;
-//	angle = 0.0f;
-//	angularVelocity = 0.0f;
-//
-//	force = glm::vec2(0.0f, 0.0f);
-//	layer = 2;
-//
-//	glm::vec2 dimensions = collider->getDimensions();
-//	min = glm::vec2(-dimensions.x / 2, -dimensions.y / 2);
-//	max = glm::vec2(dimensions.x / 2, dimensions.y / 2);
-//
-//
-//
-//	this->collider = collider;
-//	collider->setPoints();
-//
-//}
+
 
 
 void RigidBody::render()
@@ -138,6 +107,7 @@ void RigidBody::update()
 	
 	rotationMat = glm::mat2(cos(angle),sin(angle),-sin(angle),cos(angle));
 	force = glm::vec2(0.0f,0.0f);
+	angularVelocity /= 1.12f;
 }
 
 //Returns light AAB which allows for easy calculation during broad phase
@@ -155,6 +125,7 @@ void RigidBody::applyImpulse(const glm::vec2& impulse, const glm::vec2& contactP
 {
 	velocity += inv_mass * impulse;
 	angularVelocity += inv_inert * crossVec2(contactPoint,impulse);
+	Debug::log("point", contactPoint);
 	
 	
 }

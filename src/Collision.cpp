@@ -64,8 +64,18 @@ bool resolveCollisionCircleCircle(Manifold* m)
 
 		// Utilize our d since we performed sqrt on it already within Length( )
 		// Points from A to B, and is a unit vector
-		m->normal = n * (1 / d);
-
+		if (m->penetration > 0)
+		{
+			m->normal = n * (1 / d);
+			m->contacts[0] = A->position + m->normal * aCollider->radius - m->penetration;
+		}
+		else
+		{
+			m->normal = -1.0f * n * (1 / d);
+			m->contacts[0] = A->position + m->normal * aCollider->radius + m->penetration;
+		}
+		
+		
 		return true;
 	}
 
@@ -73,8 +83,10 @@ bool resolveCollisionCircleCircle(Manifold* m)
 	else
 	{
 		// Choose random (but consistent) values
+		
 		m->penetration = bCollider->radius;
 		m->normal = glm::vec2(1, 0);
+		m->contacts[0] = A->position + m->normal * aCollider->radius;
 		return true;
 	}
 }
@@ -238,14 +250,17 @@ bool resolveCollisionOBB_OBB(Manifold* m)
 	{
 		m->penetration = nExtent + d;
 		m->normal = -normal * (1 / d);
+		
 	}
 	else
 	{
 		m->penetration = nExtent - d;
 		m->normal = normal * (1 / d);
+		
 	}
 	//nRadius
 
+	m->contacts[0] = A->position + closest;
 
 
 
@@ -301,18 +316,10 @@ bool resolveCollisionOBB_Circle(Manifold* m)
 		inside = false;
 	}
 
-
-
-
-
-
-
 	// Circle is inside the OBB, so we need to clamp the circle's center
 	// to the closest edge
 	if (inside)
 	{
-
-
 
 		// Find closest axis
 		if (abs(dotCX) > abs(dotCY))
@@ -337,7 +344,7 @@ bool resolveCollisionOBB_Circle(Manifold* m)
 			//}
 
 			// Based on the prior if statement, previousDotCX can't be equal to 0
-			dotCY = (dotCY / previousDotCX) * dotCX;
+			//dotCY = (dotCY / previousDotCX) * dotCX;
 		}
 
 		// y axis is shorter
@@ -362,7 +369,7 @@ bool resolveCollisionOBB_Circle(Manifold* m)
 			//	
 			//}
 			// Based on the prior if statement, previousDotCX can't be equal to 0
-			dotCX = (dotCX / previousDotCY) * dotCY;
+			//dotCX = (dotCX / previousDotCY) * dotCY;
 		}
 
 	}
@@ -389,11 +396,13 @@ bool resolveCollisionOBB_Circle(Manifold* m)
 		//m->normal = (Vector2d)(-normal) * (1 / d);
 		m->normal = (-normal) * (1 / d);
 		m->penetration = r - d;
+		m->contacts[0] = B->position - n * m->penetration;
 	}
 	else
 	{
 		m->normal = normal * (1 / d);
 		m->penetration = r - d;
+		m->contacts[0] = B->position - n * m->penetration;
 	}
 	return true;
 }
@@ -404,6 +413,7 @@ bool resolveCollisionCircle_OBB(Manifold* m)
 	RigidBody* tmp = m->A;
 	m->A = m->B;
 	m->B = tmp;
+	m->normal *= -1;
 
 	return resolveCollisionOBB_Circle(m);
 }
@@ -432,8 +442,11 @@ void actOnCollision(Manifold* m)
 	RigidBody* A = m->A;
 	RigidBody* B = m->B;
 
+	glm::vec2 rA = m->contacts[0] - A->position;
+	glm::vec2 rB = m->contacts[0] - B->position;
+
 	// Calculate relative velocity
-	glm::vec2 rv = B->velocity - A->velocity;
+	glm::vec2 rv = B->velocity + crossVec2(B->angularVelocity,rB) - A->velocity  - crossVec2(A->angularVelocity,rA);
 
 	// Calculate relative velocity in terms of the normal direction
 	float velAlongNormal = glm::dot(rv,m->normal); 	//rv.dotProduct(m->normal);
@@ -443,34 +456,55 @@ void actOnCollision(Manifold* m)
 	// Do not resolve if velocities are separating
 	if (velAlongNormal > 0)
 	{
-		Debug::log("fezfz");
-		// Here 1 is an arbitrary value
-	    if (glm::length2(rv) >= 1)
-		{
-			//Positional correction
-			positionalCorrection(m);
-			return;
-		}
+		
+		//// Here 1 is an arbitrary value
+	 //   if (glm::length2(rv) >= 1)
+		//{
+		//	//Positional correction
+		//	positionalCorrection(m);
+		//	return;
+		//}
+		return;
 		
 
 	}
+
 	
+
+	
+	float raCrossN = crossVec2(rA, m->normal);
+	float rbCrossN = crossVec2(rB, m->normal);
+	float invMassSum = A->inv_mass + B->inv_mass + (raCrossN*raCrossN) * A->inv_inert + (rbCrossN* rbCrossN) * B->inv_inert;
 
 	// Calculate restitution
 	float e = std::min(A->restitution, B->restitution);
 
 	// Calculate impulse scalar
 	float j = -(1 + e) * velAlongNormal;
-	j /= A->inv_mass + B->inv_mass;
+	j /= invMassSum;
+	//j /= A->inv_mass + B->inv_mass;
 
 	
 	// Apply impulse
 	glm::vec2 impulse = m->normal * j;
 
 	//Apply impulse to object velocity
-	A->velocity += (-impulse * A->inv_mass);
-	B->velocity += (impulse * B->inv_mass);
+	//A->velocity += (-impulse * A->inv_mass);
+	//B->velocity += (impulse * B->inv_mass);
+	/*Debug::log("rB", rB);
+	Debug::log("rA", rA);
+	Debug::log("impulse", impulse);*/
+
 	
+	
+	A->applyImpulse(-impulse, rA);
+	B->applyImpulse(impulse, rB);
+	
+	
+
+
+
+	/*
 	//We recalculate relative velocity
 	rv = B->velocity - A->velocity;
 
@@ -511,7 +545,7 @@ void actOnCollision(Manifold* m)
 	A->velocity += (-frictionImpulse * A->inv_mass);
 	B->velocity += (frictionImpulse * B->inv_mass);
 	
-
+	*/
 	//Positional correction
 	positionalCorrection(m);
 

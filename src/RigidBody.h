@@ -17,7 +17,7 @@ class RigidBody
 {
 public:
 	RigidBody();
-	RigidBody(Collider* Collider, float x, float y,float angle = 0.0f, float mass = 20.0f, float inertia = 0.0f, float density = 20.0f, float restitution = 0.9f, float staticFriction = 0.1f, float dynamicFriction = 0.05f, uint32_t layer = 2);
+	RigidBody(Collider* Collider, float x, float y,float angle = 0.0f, float mass = 20.0f, float inertia = 20.0f, float density = 20.0f, float restitution = 0.9f, float staticFriction = 0.1f, float dynamicFriction = 0.05f, uint32_t layer = 2);
 	//RigidBody(Collider*,float x,float y, PhysicData::MassData massdat, PhysicData::MaterialData matdat);
 	//RigidBody(Collider*, float x, float y, float mass, float inertia,float density,float restitution,float staticFriction,float dynamicFriction,uint32_t layer);
 
