@@ -324,20 +324,6 @@ bool resolveCollisionOBB_Circle(Manifold* m)
 			else if(dotCX < 0)
 				dotCX = -x_extent;
 			
-
-			////On calcule dotCY
-			//if (dotCX == 0)
-			//{
-			//	//PAs sur que cette situation soit seulement possible
-			//	dotCY = 1;
-			//}
-			//else
-			//{
-			//	
-			//}
-
-			// Based on the prior if statement, previousDotCX can't be equal to 0
-			dotCY = (dotCY / previousDotCX) * dotCX;
 		}
 
 		// y axis is shorter
@@ -351,18 +337,7 @@ bool resolveCollisionOBB_Circle(Manifold* m)
 				dotCY = -y_extent;
 
 
-			////On calcule dotCX
-			//if (previousDotCY == 0)
-			//{
-			//	//PAs sur que cette situation soit seulement possible
-			//	dotCX = 1;
-			//}
-			//else
-			//{
-			//	
-			//}
-			// Based on the prior if statement, previousDotCX can't be equal to 0
-			dotCX = (dotCX / previousDotCY) * dotCY;
+			
 		}
 
 	}
@@ -443,7 +418,7 @@ void actOnCollision(Manifold* m)
 	// Do not resolve if velocities are separating
 	if (velAlongNormal > 0)
 	{
-		Debug::log("fezfz");
+	
 		// Here 1 is an arbitrary value
 	    if (glm::length2(rv) >= 1)
 		{
